@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiosk UI - ScreenCloud</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Styles */
+        .header {
+            background: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-bottom: 4px solid #3b82f6;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            width: 48px;
+            height: 48px;
+            background: #3b82f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+
+        .logo-text h1 {
+            font-size: 1.5rem;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+
+        .logo-text p {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .time-display {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.125rem;
+            font-family: monospace;
+            color: #1f2937;
+        }
+
+        .language-switcher {
+            background: #f3f4f6;
+            border-radius: 0.5rem;
+            padding: 0.25rem;
+            display: flex;
+        }
+
+        .lang-btn {
+            padding: 0.5rem 0.75rem;
+            border: none;
+            background: transparent;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .lang-btn.active {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .lang-btn:not(.active) {
+            color: #6b7280;
+        }
+
+        .lang-btn:not(.active):hover {
+            background: #e5e7eb;
+        }
+
+        /* Main Content */
+        .main-container {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 140px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 320px;
+            background: white;
+            box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+            border-right: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-content {
+            padding: 1.5rem;
+            flex: 1;
+        }
+
+        .sidebar h2 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+
+        .menu-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            text-align: left;
+            width: 100%;
+            font-size: 1.125rem;
+            font-weight: 500;
+        }
+
+        .menu-item:not(.active) {
+            background: #f9fafb;
+            color: #374151;
+        }
+
+        .menu-item:not(.active):hover {
+            background: #f3f4f6;
+            transform: scale(1.02);
+        }
+
+        .menu-item.active {
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transform: scale(1.05);
+        }
+
+        .menu-item.active.home { background: #3b82f6; }
+        .menu-item.active.info { background: #10b981; }
+        .menu-item.active.map { background: #8b5cf6; }
+        .menu-item.active.contact { background: #f59e0b; }
+        .menu-item.active.services { background: #ef4444; }
+
+        .help-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: auto;
+        }
+
+        .help-box h3 {
+            font-weight: 600;
+            color: #1e40af;
+            margin-bottom: 0.5rem;
+        }
+
+        .help-box p {
+            font-size: 0.875rem;
+            color: #1e40af;
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .content-card {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .content-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 0.75rem;
+        }
+
+        .content-subtitle {
+            font-size: 1.25rem;
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+        }
+
+        .title-underline {
+            width: 96px;
+            height: 4px;
+            background: #3b82f6;
+            margin: 0 auto;
+            border-radius: 2px;
+        }
+
+        .content-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .content-description {
+            background: #f9fafb;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-size: 1.125rem;
+            color: #374151;
+            line-height: 1.6;
+            white-space: pre-line;
+            max-width: 800px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            text-align: center;
+        }
+
+        .feature-card.green {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+
+        .map-placeholder {
+            background: #f3f4f6;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            height: 256px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            text-align: center;
+        }
+
+        .map-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1f2937;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-controls {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .footer-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border: none;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .footer-btn.back {
+            background: #374151;
+            color: white;
+        }
+
+        .footer-btn.back:hover {
+            background: #4b5563;
+        }
+
+        .footer-btn.next {
+            background: #2563eb;
+            color: white;
+        }
+
+        .footer-btn.next:hover {
+            background: #1d4ed8;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 280px;
+            }
+            
+            .content-area {
+                padding: 1rem;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo-section">
+            <div class="logo">K</div>
+            <div class="logo-text">
+                <h1>Kiosk Sistemi</h1>
+                <p>Self Service Terminal</p>
+            </div>
+        </div>
+        
+        <div class="header-controls">
+            <div class="time-display">
+                <i data-lucide="clock" style="width: 20px; height: 20px;"></i>
+                <span id="current-time">12:00</span>
+            </div>
+            
+            <div class="language-switcher">
+                <button class="lang-btn active" onclick="setLanguage('tr')">TR</button>
+                <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-content">
+                <h2 id="menu-title">Menü</h2>
+                <div class="menu-items">
+                    <button class="menu-item active home" onclick="setActiveSection('home')">
+                        <i data-lucide="home" style="width: 24px; height: 24px;"></i>
+                        <span class="menu-label">Ana Sayfa</span>
+                    </button>
+                    <button class="menu-item info" onclick="setActiveSection('info')">
+                        <i data-lucide="info" style="width: 24px; height: 24px;"></i>
+                        <span class="menu-label">Bilgi</span>
+                    </button>
+                    <button class="menu-item map" onclick="setActiveSection('map')">
+                        <i data-lucide="map" style="width: 24px; height: 24px;"></i>
+                        <span class="menu-label">Harita</span>
+                    </button>
+                    <button class="menu-item contact" onclick="setActiveSection('contact')">
+                        <i data-lucide="phone" style="width: 24px; height: 24px;"></i>
+                        <span class="menu-label">İletişim</span>
+                    </button>
+                    <button class="menu-item services" onclick="setActiveSection('services')">
+                        <i data-lucide="shopping-cart" style="width: 24px; height: 24px;"></i>
+                        <span class="menu-label">Hizmetler</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="help-box">
+                <h3 id="help-title">Yardıma mı ihtiyacınız var?</h3>
+                <p id="help-text">Personelimizden yardım alabilirsiniz.</p>
+            </div>
+        </nav>
+
+        <!-- Content Area -->
+        <main class="content-area">
+            <div class="content-card">
+                <div class="content-header">
+                    <h1 class="content-title" id="page-title">Hoş Geldiniz</h1>
+                    <p class="content-subtitle" id="page-subtitle">Size nasıl yardımcı olabiliriz?</p>
+                    <div class="title-underline"></div>
+                </div>
+
+                <div class="content-body">
+                    <div class="content-description" id="page-description">
+                        Bu kiosk ile tüm bilgilere ulaşabilir, harita görüntüleyebilir ve hizmetlerimizi keşfedebilirsiniz.
+                    </div>
+
+                    <!-- Home Features -->
+                    <div class="feature-grid" id="home-features">
+                        <div class="feature-card">
+                            <h3 id="feature1-title">Hızlı Erişim</h3>
+                            <p id="feature1-desc">En çok kullanılan özelliklere hızlıca erişin</p>
+                        </div>
+                        <div class="feature-card green">
+                            <h3 id="feature2-title">7/24 Hizmet</h3>
+                            <p id="feature2-desc">Kesintisiz hizmet deneyimi</p>
+                        </div>
+                    </div>
+
+                    <!-- Map Placeholder -->
+                    <div class="map-placeholder hidden" id="map-placeholder">
+                        <div>
+                            <i data-lucide="map" style="width: 48px; height: 48px; display: block; margin: 0 auto 1rem;"></i>
+                            <p id="map-loading">İnteraktif harita yükleniyor...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p id="footer-text">© 2025 Kiosk Sistemi. Tüm hakları saklıdır.</p>
+        <div class="footer-controls">
+            <button class="footer-btn back">
+                <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
+                <span id="back-btn">Geri</span>
+            </button>
+            <button class="footer-btn next">
+                <span id="next-btn">İleri</span>
+                <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
+            </button>
+        </div>
+    </footer>
+
+    <script>
+        // Language data
+        const content = {
+            home: {
+                tr: {
+                    title: 'Hoş Geldiniz',
+                    subtitle: 'Size nasıl yardımcı olabiliriz?',
+                    description: 'Bu kiosk ile tüm bilgilere ulaşabilir, harita görüntüleyebilir ve hizmetlerimizi keşfedebilirsiniz.'
+                },
+                en: {
+                    title: 'Welcome',
+                    subtitle: 'How can we help you?',
+                    description: 'Use this kiosk to access all information, view maps, and discover our services.'
+                }
+            },
+            info: {
+                tr: {
+                    title: 'Bilgi Merkezi',
+                    subtitle: 'Güncel Bilgiler',
+                    description: 'Açılış saatleri, özel duyurular ve güncel haberler burada yer almaktadır.'
+                },
+                en: {
+                    title: 'Information Center',
+                    subtitle: 'Current Information',
+                    description: 'Opening hours, special announcements and current news are located here.'
+                }
+            },
+            map: {
+                tr: {
+                    title: 'Harita & Konum',
+                    subtitle: 'Nereye gitmek istiyorsunuz?',
+                    description: 'İnteraktif harita ile tüm lokasyonları keşfedin.'
+                },
+                en: {
+                    title: 'Map & Location',
+                    subtitle: 'Where would you like to go?',
+                    description: 'Explore all locations with interactive map.'
+                }
+            },
+            contact: {
+                tr: {
+                    title: 'İletişim',
+                    subtitle: 'Bize Ulaşın',
+                    description: 'Telefon: +90 212 555 0123\nE-posta: info@example.com\nAdres: İstanbul, Türkiye'
+                },
+                en: {
+                    title: 'Contact',
+                    subtitle: 'Get in Touch',
+                    description: 'Phone: +90 212 555 0123\nEmail: info@example.com\nAddress: Istanbul, Turkey'
+                }
+            },
+            services: {
+                tr: {
+                    title: 'Hizmetlerimiz',
+                    subtitle: 'Neler Sunuyoruz?',
+                    description: 'Kapsamlı hizmet portföyümüzü keşfedin ve ihtiyacınıza uygun seçeneği bulun.'
+                },
+                en: {
+                    title: 'Our Services',
+                    subtitle: 'What We Offer?',
+                    description: 'Discover our comprehensive service portfolio and find the option that suits your needs.'
+                }
+            }
+        };
+
+        const menuLabels = {
+            tr: ['Ana Sayfa', 'Bilgi', 'Harita', 'İletişim', 'Hizmetler'],
+            en: ['Home', 'Information', 'Map', 'Contact', 'Services']
+        };
+
+        const ui = {
+            tr: {
+                menuTitle: 'Menü',
+                helpTitle: 'Yardıma mı ihtiyacınız var?',
+                helpText: 'Personelimizden yardım alabilirsiniz.',
+                footerText: '© 2025 Kiosk Sistemi. Tüm hakları saklıdır.',
+                backBtn: 'Geri',
+                nextBtn: 'İleri',
+                mapLoading: 'İnteraktif harita yükleniyor...',
+                feature1Title: 'Hızlı Erişim',
+                feature1Desc: 'En çok kullanılan özelliklere hızlıca erişin',
+                feature2Title: '7/24 Hizmet',
+                feature2Desc: 'Kesintisiz hizmet deneyimi'
+            },
+            en: {
+                menuTitle: 'Menu',
+                helpTitle: 'Need help?',
+                helpText: 'You can get help from our staff.',
+                footerText: '© 2025 Kiosk System. All rights reserved.',
+                backBtn: 'Back',
+                nextBtn: 'Next',
+                mapLoading: 'Loading interactive map...',
+                feature1Title: 'Quick Access',
+                feature1Desc: 'Quick access to most used features',
+                feature2Title: '24/7 Service',
+                feature2Desc: 'Uninterrupted service experience'
+            }
+        };
+
+        let currentLanguage = 'tr';
+        let currentSection = 'home';
+
+        // Initialize
+        function init() {
+            updateTime();
+            setInterval(updateTime, 1000);
+            lucide.createIcons();
+        }
+
+        // Update time
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('current-time').textContent = 
+                now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // Set language
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            
+            // Update language buttons
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            updateContent();
+        }
+
+        // Set active section
+        function setActiveSection(section) {
+            currentSection = section;
+            
+            // Update menu items
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            document.querySelector(`.menu-item.${section}`).classList.add('active');
+            
+            // Show/hide elements
+            document.getElementById('home-features').classList.toggle('hidden', section !== 'home');
+            document.getElementById('map-placeholder').classList.toggle('hidden', section !== 'map');
+            
+            updateContent();
+        }
+
+        // Update content
+        function updateContent() {
+            const sectionContent = content[currentSection][currentLanguage];
+            const uiTexts = ui[currentLanguage];
+            
+            // Update main content
+            document.getElementById('page-title').textContent = sectionContent.title;
+            document.getElementById('page-subtitle').textContent = sectionContent.subtitle;
+            document.getElementById('page-description').textContent = sectionContent.description;
+            
+            // Update menu labels
+            const menuItems = document.querySelectorAll('.menu-label');
+            menuLabels[currentLanguage].forEach((label, index) => {
+                if (menuItems[index]) menuItems[index].textContent = label;
+            });
+            
+            // Update UI elements
+            document.getElementById('menu-title').textContent = uiTexts.menuTitle;
+            document.getElementById('help-title').textContent = uiTexts.helpTitle;
+            document.getElementById('help-text').textContent = uiTexts.helpText;
+            document.getElementById('footer-text').textContent = uiTexts.footerText;
+            document.getElementById('back-btn').textContent = uiTexts.backBtn;
+            document.getElementById('next-btn').textContent = uiTexts.nextBtn;
+            document.getElementById('map-loading').textContent = uiTexts.mapLoading;
+            document.getElementById('feature1-title').textContent = uiTexts.feature1Title;
+            document.getElementById('feature1-desc').textContent = uiTexts.feature1Desc;
+            document.getElementById('feature2-title').textContent = uiTexts.feature2Title;
+            document.getElementById('feature2-desc').textContent = uiTexts.feature2Desc;
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
