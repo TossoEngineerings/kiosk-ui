@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kiosk UI - ScreenCloud</title>
+    <title>Hastane Kiosk Sistemi</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
     <style>
         * {
@@ -14,655 +14,1071 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
             height: 100vh;
             overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        /* Screens */
+        .screen {
+            display: none;
+            height: 100vh;
+            position: relative;
+        }
+
+        .screen.active {
             display: flex;
             flex-direction: column;
         }
 
-        /* Header Styles */
-        .header {
-            background: white;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            border-bottom: 4px solid #3b82f6;
-            padding: 1rem 2rem;
+        /* Welcome Screen */
+        .welcome-screen {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
         }
 
-        .logo-section {
+        .welcome-content {
+            text-align: center;
+            color: white;
+            z-index: 2;
+        }
+
+        .hospital-logo {
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .welcome-title {
+            font-size: 4rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            animation: fadeInOut 4s infinite;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            margin-bottom: 3rem;
+        }
+
+        .tap-instruction {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: translateY(20px); }
+            50% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Main Menu Screen */
+        .main-menu-screen {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            position: relative;
+        }
+
+        .menu-header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-logo {
             display: flex;
             align-items: center;
             gap: 1rem;
         }
 
-        .logo {
-            width: 48px;
-            height: 48px;
-            background: #3b82f6;
+        .menu-logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
+        }
+
+        .menu-title {
+            font-size: 2rem;
             font-weight: bold;
-            font-size: 1.25rem;
+            color: #333;
         }
 
-        .logo-text h1 {
-            font-size: 1.5rem;
-            color: #1f2937;
-            margin-bottom: 0.25rem;
-        }
-
-        .logo-text p {
-            font-size: 0.875rem;
-            color: #6b7280;
-        }
-
-        .header-controls {
+        .language-selector {
             display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        .time-display {
-            display: flex;
-            align-items: center;
             gap: 0.5rem;
-            font-size: 1.125rem;
-            font-family: monospace;
-            color: #1f2937;
-        }
-
-        .language-switcher {
-            background: #f3f4f6;
-            border-radius: 0.5rem;
-            padding: 0.25rem;
-            display: flex;
         }
 
         .lang-btn {
-            padding: 0.5rem 0.75rem;
+            padding: 0.5rem 1rem;
             border: none;
-            background: transparent;
-            border-radius: 0.375rem;
-            font-size: 0.875rem;
-            font-weight: 500;
+            border-radius: 25px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
         }
 
         .lang-btn.active {
-            background: #3b82f6;
+            background: #667eea;
             color: white;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transform: scale(1.1);
         }
 
         .lang-btn:not(.active) {
-            color: #6b7280;
+            background: rgba(255, 255, 255, 0.7);
+            color: #333;
         }
 
         .lang-btn:not(.active):hover {
-            background: #e5e7eb;
-        }
-
-        /* Main Content */
-        .main-container {
-            display: flex;
-            flex: 1;
-            height: calc(100vh - 140px);
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 320px;
-            background: white;
-            box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
-            border-right: 1px solid #e5e7eb;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sidebar-content {
-            padding: 1.5rem;
-            flex: 1;
-        }
-
-        .sidebar h2 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 1rem;
-        }
-
-        .menu-items {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .menu-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem;
-            border-radius: 0.75rem;
-            transition: all 0.2s;
-            cursor: pointer;
-            border: none;
-            background: transparent;
-            text-align: left;
-            width: 100%;
-            font-size: 1.125rem;
-            font-weight: 500;
-        }
-
-        .menu-item:not(.active) {
-            background: #f9fafb;
-            color: #374151;
-        }
-
-        .menu-item:not(.active):hover {
-            background: #f3f4f6;
-            transform: scale(1.02);
-        }
-
-        .menu-item.active {
-            color: white;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.9);
             transform: scale(1.05);
         }
 
-        .menu-item.active.home { background: #3b82f6; }
-        .menu-item.active.info { background: #10b981; }
-        .menu-item.active.map { background: #8b5cf6; }
-        .menu-item.active.contact { background: #f59e0b; }
-        .menu-item.active.services { background: #ef4444; }
-
-        .help-box {
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin-top: auto;
-        }
-
-        .help-box h3 {
-            font-weight: 600;
-            color: #1e40af;
-            margin-bottom: 0.5rem;
-        }
-
-        .help-box p {
-            font-size: 0.875rem;
-            color: #1e40af;
-        }
-
-        /* Content Area */
-        .content-area {
+        .menu-content {
             flex: 1;
-            padding: 2rem;
-            overflow-y: auto;
-        }
-
-        .content-card {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 1rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-            height: 100%;
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
         }
 
-        .content-header {
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+            max-width: 1200px;
+        }
+
+        .menu-button {
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 2rem;
+            padding: 3rem 2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
             text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .content-title {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #1f2937;
-            margin-bottom: 0.75rem;
-        }
-
-        .content-subtitle {
-            font-size: 1.25rem;
-            color: #6b7280;
-            margin-bottom: 1.5rem;
-        }
-
-        .title-underline {
-            width: 96px;
-            height: 4px;
-            background: #3b82f6;
-            margin: 0 auto;
-            border-radius: 2px;
-        }
-
-        .content-body {
-            flex: 1;
+            min-height: 300px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
         }
 
-        .content-description {
-            background: #f9fafb;
-            border-radius: 0.75rem;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            text-align: center;
-            font-size: 1.125rem;
-            color: #374151;
-            line-height: 1.6;
-            white-space: pre-line;
-            max-width: 800px;
+        .menu-button:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
-        .feature-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            width: 100%;
-            max-width: 600px;
-        }
-
-        .feature-card {
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        .menu-button-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
             color: white;
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-            text-align: center;
         }
 
-        .feature-card.green {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        }
+        .ai-assistant { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .translator { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .patient-info { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
 
-        .feature-card h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
+        .menu-button-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
             margin-bottom: 0.5rem;
         }
 
-        .feature-card p {
-            opacity: 0.9;
+        .menu-button-desc {
+            font-size: 1rem;
+            color: #666;
             line-height: 1.4;
         }
 
-        .map-placeholder {
-            background: #f3f4f6;
-            border-radius: 0.75rem;
-            padding: 2rem;
-            height: 256px;
+        /* Back Button */
+        .back-button {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50px;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: center;
-            color: #6b7280;
-            text-align: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
         }
 
-        .map-placeholder i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+        .back-button:hover {
+            background: white;
+            transform: scale(1.05);
         }
 
-        /* Footer */
-        .footer {
-            background: #1f2937;
-            color: white;
-            padding: 1rem 2rem;
+        /* AI Assistant Screen */
+        .ai-screen {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .ai-header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1.5rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .footer-controls {
+        .ai-content {
+            flex: 1;
+            display: flex;
+            padding: 2rem;
+            gap: 2rem;
+        }
+
+        .chat-container {
+            flex: 2;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+
+        .message {
+            margin-bottom: 1rem;
             display: flex;
             gap: 1rem;
         }
 
-        .footer-btn {
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.assistant {
+            justify-content: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 1rem 1.5rem;
+            border-radius: 1.5rem;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        .message.user .message-bubble {
+            background: #667eea;
+            color: white;
+            border-bottom-right-radius: 0.5rem;
+        }
+
+        .message.assistant .message-bubble {
+            background: #f0f0f0;
+            color: #333;
+            border-bottom-left-radius: 0.5rem;
+        }
+
+        .chat-input-area {
+            padding: 1.5rem;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: 2px solid #eee;
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .chat-input:focus {
+            border-color: #667eea;
+        }
+
+        .send-button, .voice-button {
+            padding: 1rem;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .send-button {
+            background: #667eea;
+            color: white;
+        }
+
+        .voice-button {
+            background: #43e97b;
+            color: white;
+        }
+
+        .send-button:hover, .voice-button:hover {
+            transform: scale(1.1);
+        }
+
+        .voice-button.recording {
+            background: #ff4757;
+            animation: pulse 1s infinite;
+        }
+
+        .ai-info {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 1.5rem;
+            padding: 2rem;
+        }
+
+        .info-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .info-list {
+            list-style: none;
+        }
+
+        .info-list li {
+            padding: 0.5rem 0;
+            color: #666;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.5rem 0.75rem;
+        }
+
+        /* Translator Screen */
+        .translator-screen {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .translator-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .translator-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 900px;
+        }
+
+        .translator-button {
+            background: rgba(255, 255, 255, 0.95);
             border: none;
-            border-radius: 0.375rem;
-            font-size: 0.875rem;
+            border-radius: 1.5rem;
+            padding: 2rem;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
-        .footer-btn.back {
-            background: #374151;
+        .translator-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .translator-flag {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .flag-tr { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
+        .flag-en { background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); }
+        .flag-bg { background: linear-gradient(135deg, #27ae60 0%, #229954 100%); }
+
+        .translator-lang {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Patient Info Screen */
+        .patient-screen {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .patient-content {
+            flex: 1;
+            display: flex;
+            padding: 2rem;
+            gap: 2rem;
+        }
+
+        .patient-form {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 1.5rem;
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #eee;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            border-color: #fa709a;
+            outline: none;
+        }
+
+        .submit-button {
+            background: #fa709a;
             color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
         }
 
-        .footer-btn.back:hover {
-            background: #4b5563;
+        .submit-button:hover {
+            background: #e91e63;
+            transform: translateY(-2px);
         }
 
-        .footer-btn.next {
-            background: #2563eb;
-            color: white;
+        .patient-results {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 1.5rem;
+            padding: 2rem;
         }
 
-        .footer-btn.next:hover {
-            background: #1d4ed8;
+        .results-empty {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            margin-top: 2rem;
         }
 
-        /* Responsive Design */
+        .result-item {
+            background: #f8f9fa;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #fa709a;
+        }
+
+        .result-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-date {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Responsive */
         @media (max-width: 1024px) {
-            .sidebar {
-                width: 280px;
-            }
-            
-            .content-area {
-                padding: 1rem;
-            }
-            
-            .feature-grid {
+            .menu-grid {
                 grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .translator-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .ai-content, .patient-content {
+                flex-direction: column;
             }
         }
 
         .hidden {
-            display: none;
+            display: none !important;
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="logo-section">
-            <div class="logo">K</div>
-            <div class="logo-text">
-                <h1>Kiosk Sistemi</h1>
-                <p>Self Service Terminal</p>
+    <!-- Welcome Screen -->
+    <div class="screen active" id="welcome-screen">
+        <div class="welcome-screen" onclick="showMainMenu()">
+            <div class="welcome-content">
+                <div class="hospital-logo">
+                    <i data-lucide="heart-pulse" style="width: 60px; height: 60px; color: white;"></i>
+                </div>
+                <h1 class="welcome-title" id="welcome-title">Hoş Geldiniz</h1>
+                <p class="welcome-subtitle" id="welcome-subtitle">Sağlık Hizmetleri Kiosk Sistemi</p>
+                <p class="tap-instruction" id="tap-instruction">Devam etmek için ekrana dokunun</p>
             </div>
         </div>
-        
-        <div class="header-controls">
-            <div class="time-display">
-                <i data-lucide="clock" style="width: 20px; height: 20px;"></i>
-                <span id="current-time">12:00</span>
-            </div>
-            
-            <div class="language-switcher">
-                <button class="lang-btn active" onclick="setLanguage('tr')">TR</button>
-                <button class="lang-btn" onclick="setLanguage('en')">EN</button>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Container -->
-    <div class="main-container">
-        <!-- Sidebar -->
-        <nav class="sidebar">
-            <div class="sidebar-content">
-                <h2 id="menu-title">Menü</h2>
-                <div class="menu-items">
-                    <button class="menu-item active home" onclick="setActiveSection('home')">
-                        <i data-lucide="home" style="width: 24px; height: 24px;"></i>
-                        <span class="menu-label">Ana Sayfa</span>
-                    </button>
-                    <button class="menu-item info" onclick="setActiveSection('info')">
-                        <i data-lucide="info" style="width: 24px; height: 24px;"></i>
-                        <span class="menu-label">Bilgi</span>
-                    </button>
-                    <button class="menu-item map" onclick="setActiveSection('map')">
-                        <i data-lucide="map" style="width: 24px; height: 24px;"></i>
-                        <span class="menu-label">Harita</span>
-                    </button>
-                    <button class="menu-item contact" onclick="setActiveSection('contact')">
-                        <i data-lucide="phone" style="width: 24px; height: 24px;"></i>
-                        <span class="menu-label">İletişim</span>
-                    </button>
-                    <button class="menu-item services" onclick="setActiveSection('services')">
-                        <i data-lucide="shopping-cart" style="width: 24px; height: 24px;"></i>
-                        <span class="menu-label">Hizmetler</span>
-                    </button>
-                </div>
-            </div>
-            
-            <div class="help-box">
-                <h3 id="help-title">Yardıma mı ihtiyacınız var?</h3>
-                <p id="help-text">Personelimizden yardım alabilirsiniz.</p>
-            </div>
-        </nav>
-
-        <!-- Content Area -->
-        <main class="content-area">
-            <div class="content-card">
-                <div class="content-header">
-                    <h1 class="content-title" id="page-title">Hoş Geldiniz</h1>
-                    <p class="content-subtitle" id="page-subtitle">Size nasıl yardımcı olabiliriz?</p>
-                    <div class="title-underline"></div>
-                </div>
-
-                <div class="content-body">
-                    <div class="content-description" id="page-description">
-                        Bu kiosk ile tüm bilgilere ulaşabilir, harita görüntüleyebilir ve hizmetlerimizi keşfedebilirsiniz.
-                    </div>
-
-                    <!-- Home Features -->
-                    <div class="feature-grid" id="home-features">
-                        <div class="feature-card">
-                            <h3 id="feature1-title">Hızlı Erişim</h3>
-                            <p id="feature1-desc">En çok kullanılan özelliklere hızlıca erişin</p>
-                        </div>
-                        <div class="feature-card green">
-                            <h3 id="feature2-title">7/24 Hizmet</h3>
-                            <p id="feature2-desc">Kesintisiz hizmet deneyimi</p>
-                        </div>
-                    </div>
-
-                    <!-- Map Placeholder -->
-                    <div class="map-placeholder hidden" id="map-placeholder">
-                        <div>
-                            <i data-lucide="map" style="width: 48px; height: 48px; display: block; margin: 0 auto 1rem;"></i>
-                            <p id="map-loading">İnteraktif harita yükleniyor...</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <p id="footer-text">© 2025 Kiosk Sistemi. Tüm hakları saklıdır.</p>
-        <div class="footer-controls">
-            <button class="footer-btn back">
-                <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
-                <span id="back-btn">Geri</span>
-            </button>
-            <button class="footer-btn next">
-                <span id="next-btn">İleri</span>
-                <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
-            </button>
+    <!-- Main Menu Screen -->
+    <div class="screen" id="main-menu-screen">
+        <div class="main-menu-screen">
+            <div class="menu-header">
+                <div class="menu-logo">
+                    <div class="menu-logo-icon">
+                        <i data-lucide="hospital" style="width: 30px; height: 30px;"></i>
+                    </div>
+                    <h1 class="menu-title" id="menu-main-title">Sağlık Hizmetleri</h1>
+                </div>
+                <div class="language-selector">
+                    <button class="lang-btn active" onclick="setLanguage('tr')">TR</button>
+                    <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+                    <button class="lang-btn" onclick="setLanguage('bg')">BG</button>
+                </div>
+            </div>
+            <div class="menu-content">
+                <div class="menu-grid">
+                    <button class="menu-button" onclick="showScreen('ai-screen')">
+                        <div class="menu-button-icon ai-assistant">
+                            <i data-lucide="bot" style="width: 50px; height: 50px;"></i>
+                        </div>
+                        <h3 class="menu-button-title" id="ai-title">Akıllı Asistan</h3>
+                        <p class="menu-button-desc" id="ai-desc">Hastane içi yönlendirme ve bilgi alma</p>
+                    </button>
+                    <button class="menu-button" onclick="showScreen('translator-screen')">
+                        <div class="menu-button-icon translator">
+                            <i data-lucide="languages" style="width: 50px; height: 50px;"></i>
+                        </div>
+                        <h3 class="menu-button-title" id="translator-title">Tercümana Bağlan</h3>
+                        <p class="menu-button-desc" id="translator-desc">Canlı tercüman desteği alın</p>
+                    </button>
+                    <button class="menu-button" onclick="showScreen('patient-screen')">
+                        <div class="menu-button-icon patient-info">
+                            <i data-lucide="user-check" style="width: 50px; height: 50px;"></i>
+                        </div>
+                        <h3 class="menu-button-title" id="patient-title">Hasta Bilgilendirme</h3>
+                        <p class="menu-button-desc" id="patient-desc">Randevu ve test sonuçlarınızı görün</p>
+                    </button>
+                </div>
+            </div>
         </div>
-    </footer>
+    </div>
+
+    <!-- AI Assistant Screen -->
+    <div class="screen" id="ai-screen">
+        <div class="ai-screen">
+            <div class="ai-header">
+                <h2 id="ai-header-title">Akıllı Asistan</h2>
+                <button class="back-button" onclick="showMainMenu()">
+                    <i data-lucide="arrow-left" style="width: 20px; height: 20px;"></i>
+                    <span id="back-text">Geri</span>
+                </button>
+            </div>
+            <div class="ai-content">
+                <div class="chat-container">
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="message assistant">
+                            <div class="message-bubble" id="ai-welcome-msg">
+                                Merhaba! Size nasıl yardımcı olabilirim? Hastane içi yönlendirme, bölümler veya doktorlar hakkında sorularınızı cevaplayabilirim.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" class="chat-input" id="chat-input" placeholder="Sorunuzu yazın...">
+                        <button class="voice-button" id="voice-button" onclick="toggleVoice()">
+                            <i data-lucide="mic" style="width: 20px; height: 20px;"></i>
+                        </button>
+                        <button class="send-button" onclick="sendMessage()">
+                            <i data-lucide="send" style="width: 20px; height: 20px;"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="ai-info">
+                    <h3 class="info-title" id="ai-info-title">Yardımcı Bilgiler</h3>
+                    <ul class="info-list" id="ai-info-list">
+                        <li><i data-lucide="map-pin" style="width: 16px; height: 16px;"></i> Acil Servis: Zemin Kat</li>
+                        <li><i data-lucide="stethoscope" style="width: 16px; height: 16px;"></i> Poliklinikler: 1. Kat</li>
+                        <li><i data-lucide="bed" style="width: 16px; height: 16px;"></i> Yataklı Servis: 2-4. Kat</li>
+                        <li><i data-lucide="microscope" style="width: 16px; height: 16px;"></i> Laboratuvar: Zemin Kat</li>
+                        <li><i data-lucide="scan" style="width: 16px; height: 16px;"></i> Radyoloji: Bodrum Kat</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Translator Screen -->
+    <div class="screen" id="translator-screen">
+        <div class="translator-screen">
+            <div class="ai-header">
+                <h2 id="translator-header-title">Tercümana Bağlan</h2>
+                <button class="back-button" onclick="showMainMenu()">
+                    <i data-lucide="arrow-left" style="width: 20px; height: 20px;"></i>
+                    <span id="back-text-2">Geri</span>
+                </button>
+            </div>
+            <div class="translator-content">
+                <div class="translator-grid">
+                    <button class="translator-button" onclick="connectTranslator('tr')">
+                        <div class="translator-flag flag-tr">🇹🇷</div>
+                        <div class="translator-lang" id="turkish-translator">Türkçe Tercüman</div>
+                    </button>
+                    <button class="translator-button" onclick="connectTranslator('en')">
+                        <div class="translator-flag flag-en">🇺🇸</div>
+                        <div class="translator-lang" id="english-translator">English Translator</div>
+                    </button>
+                    <button class="translator-button" onclick="connectTranslator('bg')">
+                        <div class="translator-flag flag-bg">🇧🇬</div>
+                        <div class="translator-lang" id="bulgarian-translator">Български Преводач</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Patient Info Screen -->
+    <div class="screen" id="patient-screen">
+        <div class="patient-screen">
+            <div class="ai-header">
+                <h2 id="patient-header-title">Hasta Bilgilendirme</h2>
+                <button class="back-button" onclick="showMainMenu()">
+                    <i data-lucide="arrow-left" style="width: 20px; height: 20px;"></i>
+                    <span id="back-text-3">Geri</span>
+                </button>
+            </div>
+            <div class="patient-content">
+                <div class="patient-form">
+                    <h3 class="info-title" id="patient-form-title">Kişisel Bilgilerinizi Girin</h3>
+                    <form onsubmit="searchPatientInfo(event)">
+                        <div class="form-group">
+                            <label class="form-label" id="tc-label">TC Kimlik No:</label>
+                            <input type="text" class="form-input" id="tc-input" maxlength="11" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" id="name-label">Ad Soyad:</label>
+                            <input type="text" class="form-input" id="name-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" id="birth-label">Doğum Tarihi:</label>
+                            <input type="date" class="form-input" id="birth-input" required>
+                        </div>
+                        <button type="submit" class="submit-button" id="search-button">Bilgileri Getir</button>
+                    </form>
+                </div>
+                <div class="patient-results">
+                    <h3 class="info-title" id="results-title">Sonuçlar</h3>
+                    <div id="patient-results-content">
+                        <div class="results-empty" id="results-empty">
+                            Bilgilerinizi girerek randevu ve test sonuçlarınızı görüntüleyebilirsiniz.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // Language data
+        // Language content
         const content = {
-            home: {
-                tr: {
-                    title: 'Hoş Geldiniz',
-                    subtitle: 'Size nasıl yardımcı olabiliriz?',
-                    description: 'Bu kiosk ile tüm bilgilere ulaşabilir, harita görüntüleyebilir ve hizmetlerimizi keşfedebilirsiniz.'
-                },
-                en: {
-                    title: 'Welcome',
-                    subtitle: 'How can we help you?',
-                    description: 'Use this kiosk to access all information, view maps, and discover our services.'
-                }
-            },
-            info: {
-                tr: {
-                    title: 'Bilgi Merkezi',
-                    subtitle: 'Güncel Bilgiler',
-                    description: 'Açılış saatleri, özel duyurular ve güncel haberler burada yer almaktadır.'
-                },
-                en: {
-                    title: 'Information Center',
-                    subtitle: 'Current Information',
-                    description: 'Opening hours, special announcements and current news are located here.'
-                }
-            },
-            map: {
-                tr: {
-                    title: 'Harita & Konum',
-                    subtitle: 'Nereye gitmek istiyorsunuz?',
-                    description: 'İnteraktif harita ile tüm lokasyonları keşfedin.'
-                },
-                en: {
-                    title: 'Map & Location',
-                    subtitle: 'Where would you like to go?',
-                    description: 'Explore all locations with interactive map.'
-                }
-            },
-            contact: {
-                tr: {
-                    title: 'İletişim',
-                    subtitle: 'Bize Ulaşın',
-                    description: 'Telefon: +90 212 555 0123\nE-posta: info@example.com\nAdres: İstanbul, Türkiye'
-                },
-                en: {
-                    title: 'Contact',
-                    subtitle: 'Get in Touch',
-                    description: 'Phone: +90 212 555 0123\nEmail: info@example.com\nAddress: Istanbul, Turkey'
-                }
-            },
-            services: {
-                tr: {
-                    title: 'Hizmetlerimiz',
-                    subtitle: 'Neler Sunuyoruz?',
-                    description: 'Kapsamlı hizmet portföyümüzü keşfedin ve ihtiyacınıza uygun seçeneği bulun.'
-                },
-                en: {
-                    title: 'Our Services',
-                    subtitle: 'What We Offer?',
-                    description: 'Discover our comprehensive service portfolio and find the option that suits your needs.'
-                }
-            }
-        };
-
-        const menuLabels = {
-            tr: ['Ana Sayfa', 'Bilgi', 'Harita', 'İletişim', 'Hizmetler'],
-            en: ['Home', 'Information', 'Map', 'Contact', 'Services']
-        };
-
-        const ui = {
             tr: {
-                menuTitle: 'Menü',
-                helpTitle: 'Yardıma mı ihtiyacınız var?',
-                helpText: 'Personelimizden yardım alabilirsiniz.',
-                footerText: '© 2025 Kiosk Sistemi. Tüm hakları saklıdır.',
-                backBtn: 'Geri',
-                nextBtn: 'İleri',
-                mapLoading: 'İnteraktif harita yükleniyor...',
-                feature1Title: 'Hızlı Erişim',
-                feature1Desc: 'En çok kullanılan özelliklere hızlıca erişin',
-                feature2Title: '7/24 Hizmet',
-                feature2Desc: 'Kesintisiz hizmet deneyimi'
+                welcomeTitle: 'Hoş Geldiniz',
+                welcomeSubtitle: 'Sağlık Hizmetleri Kiosk Sistemi',
+                tapInstruction: 'Devam etmek için ekrana dokunun',
+                menuMainTitle: 'Sağlık Hizmetleri',
+                aiTitle: 'Akıllı Asistan',
+                aiDesc: 'Hastane içi yönlendirme ve bilgi alma',
+                translatorTitle: 'Tercümana Bağlan',
+                translatorDesc: 'Canlı tercüman desteği alın',
+                patientTitle: 'Hasta Bilgilendirme',
+                patientDesc: 'Randevu ve test sonuçlarınızı görün',
+                back: 'Geri',
+                aiHeaderTitle: 'Akıllı Asistan',
+                aiWelcomeMsg: 'Merhaba! Size nasıl yardımcı olabilirim? Hastane içi yönlendirme, bölümler veya doktorlar hakkında sorularınızı cevaplayabilirim.',
+                aiInfoTitle: 'Yardımcı Bilgiler',
+                translatorHeaderTitle: 'Tercümana Bağlan',
+                turkishTranslator: 'Türkçe Tercüman',
+                englishTranslator: 'English Translator',
+                bulgarianTranslator: 'Български Преводач',
+                patientHeaderTitle: 'Hasta Bilgilendirme',
+                patientFormTitle: 'Kişisel Bilgilerinizi Girin',
+                tcLabel: 'TC Kimlik No:',
+                nameLabel: 'Ad Soyad:',
+                birthLabel: 'Doğum Tarihi:',
+                searchButton: 'Bilgileri Getir',
+                resultsTitle: 'Sonuçlar',
+                resultsEmpty: 'Bilgilerinizi girerek randevu ve test sonuçlarınızı görüntüleyebilirsiniz.',
+                chatPlaceholder: 'Sorunuzu yazın...'
             },
             en: {
-                menuTitle: 'Menu',
-                helpTitle: 'Need help?',
-                helpText: 'You can get help from our staff.',
-                footerText: '© 2025 Kiosk System. All rights reserved.',
-                backBtn: 'Back',
-                nextBtn: 'Next',
-                mapLoading: 'Loading interactive map...',
-                feature1Title: 'Quick Access',
-                feature1Desc: 'Quick access to most used features',
-                feature2Title: '24/7 Service',
-                feature2Desc: 'Uninterrupted service experience'
+                welcomeTitle: 'Welcome',
+                welcomeSubtitle: 'Healthcare Kiosk System',
+                tapInstruction: 'Touch the screen to continue',
+                menuMainTitle: 'Healthcare Services',
+                aiTitle: 'AI Assistant',
+                aiDesc: 'Hospital navigation and information',
+                translatorTitle: 'Connect to Translator',
+                translatorDesc: 'Get live translator support',
+                patientTitle: 'Patient Information',
+                patientDesc: 'View your appointments and test results',
+                back: 'Back',
+                aiHeaderTitle: 'AI Assistant',
+                aiWelcomeMsg: 'Hello! How can I help you? I can answer questions about hospital navigation, departments, or doctors.',
+                aiInfoTitle: 'Helpful Information',
+                translatorHeaderTitle: 'Connect to Translator',
+                turkishTranslator: 'Türkçe Tercüman',
+                englishTranslator: 'English Translator',
+                bulgarianTranslator: 'Български Преводач',
+                patientHeaderTitle: 'Patient Information',
+                patientFormTitle: 'Enter Your Personal Information',
+                tcLabel: 'ID Number:',
+                nameLabel: 'Full Name:',
+                birthLabel: 'Birth Date:',
+                searchButton: 'Get Information',
+                resultsTitle: 'Results',
+                resultsEmpty: 'Enter your information to view appointments and test results.',
+                chatPlaceholder: 'Type your question...'
+            },
+            bg: {
+                welcomeTitle: 'Добре дошли',
+                welcomeSubtitle: 'Система за здравни услуги',
+                tapInstruction: 'Докоснете екрана, за да продължите',
+                menuMainTitle: 'Здравни услуги',
+                aiTitle: 'ИИ Асистент',
+                aiDesc: 'Навигация в болницата и информация',
+                translatorTitle: 'Свържете се с преводач',
+                translatorDesc: 'Получете подкрепа от преводач на живо',
+                patientTitle: 'Информация за пациента',
+                patientDesc: 'Вижте вашите срещи и резултати от тестове',
+                back: 'Назад',
+                aiHeaderTitle: 'ИИ Асистент',
+                aiWelcomeMsg: 'Здравейте! Как мога да ви помогна? Мога да отговоря на въпроси за навигацията в болницата, отделенията или лекарите.',
+                aiInfoTitle: 'Полезна информация',
+                translatorHeaderTitle: 'Свържете се с преводач',
+                turkishTranslator: 'Türkçe Tercüman',
+                englishTranslator: 'English Translator',
+                bulgarianTranslator: 'Български Преводач',
+                patientHeaderTitle: 'Информация за пациента',
+                patientFormTitle: 'Въведете вашата лична информация',
+                tcLabel: 'ЕГН:',
+                nameLabel: 'Име и фамилия:',
+                birthLabel: 'Дата на раждане:',
+                searchButton: 'Получи информация',
+                resultsTitle: 'Резултати',
+                resultsEmpty: 'Въведете информацията си, за да видите срещи и резултати от тестове.',
+                chatPlaceholder: 'Напишете въпроса си...'
             }
+        };
+
+        // Teams links for translators
+        const teamsLinks = {
+            tr: 'https://teams.microsoft.com/l/meetup-join/tr-translator-link',
+            en: 'https://teams.microsoft.com/l/meetup-join/en-translator-link',
+            bg: 'https://teams.microsoft.com/l/meetup-join/bg-translator-link'
         };
 
         let currentLanguage = 'tr';
-        let currentSection = 'home';
+        let welcomeTextIndex = 0;
+        let isRecording = false;
 
         // Initialize
         function init() {
-            updateTime();
-            setInterval(updateTime, 1000);
             lucide.createIcons();
+            startWelcomeRotation();
+            setupChatInput();
         }
 
-        // Update time
-        function updateTime() {
-            const now = new Date();
-            document.getElementById('current-time').textContent = 
-                now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+        // Welcome text rotation
+        function startWelcomeRotation() {
+            const languages = ['tr', 'en', 'bg'];
+            setInterval(() => {
+                const lang = languages[welcomeTextIndex];
+                document.getElementById('welcome-title').textContent = content[lang].welcomeTitle;
+                document.getElementById('welcome-subtitle').textContent = content[lang].welcomeSubtitle;
+                document.getElementById('tap-instruction').textContent = content[lang].tapInstruction;
+                welcomeTextIndex = (welcomeTextIndex + 1) % languages.length;
+            }, 3000);
         }
 
-        // Set language
+        // Show screens
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function showMainMenu() {
+            showScreen('main-menu-screen');
+        }
+
+        // Language switching
         function setLanguage(lang) {
             currentLanguage = lang;
-            
-            // Update language buttons
             document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
-            
             updateContent();
         }
 
-        // Set active section
-        function setActiveSection(section) {
-            currentSection = section;
-            
-            // Update menu items
-            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
-            document.querySelector(`.menu-item.${section}`).classList.add('active');
-            
-            // Show/hide elements
-            document.getElementById('home-features').classList.toggle('hidden', section !== 'home');
-            document.getElementById('map-placeholder').classList.toggle('hidden', section !== 'map');
-            
-            updateContent();
-        }
-
-        // Update content
         function updateContent() {
-            const sectionContent = content[currentSection][currentLanguage];
-            const uiTexts = ui[currentLanguage];
+            const c = content[currentLanguage];
             
-            // Update main content
-            document.getElementById('page-title').textContent = sectionContent.title;
-            document.getElementById('page-subtitle').textContent = sectionContent.subtitle;
-            document.getElementById('page-description').textContent = sectionContent.description;
-            
-            // Update menu labels
-            const menuItems = document.querySelectorAll('.menu-label');
-            menuLabels[currentLanguage].forEach((label, index) => {
-                if (menuItems[index]) menuItems[index].textContent = label;
+            // Update all text elements
+            const updates = {
+                'menu-main-title': c.menuMainTitle,
+                'ai-title': c.aiTitle,
+                'ai-desc': c.aiDesc,
+                'translator-title': c.translatorTitle,
+                'translator-desc': c.translatorDesc,
+                'patient-title': c.patientTitle,
+                'patient-desc': c.patientDesc,
+                'back-text': c.back,
+                'back-text-2': c.back,
+                'back-text-3': c.back,
+                'ai-header-title': c.aiHeaderTitle,
+                'ai-welcome-msg': c.aiWelcomeMsg,
+                'ai-info-title': c.aiInfoTitle,
+                'translator-header-title': c.translatorHeaderTitle,
+                'turkish-translator': c.turkishTranslator,
+                'english-translator': c.englishTranslator,
+                'bulgarian-translator': c.bulgarianTranslator,
+                'patient-header-title': c.patientHeaderTitle,
+                'patient-form-title': c.patientFormTitle,
+                'tc-label': c.tcLabel,
+                'name-label': c.nameLabel,
+                'birth-label': c.birthLabel,
+                'search-button': c.searchButton,
+                'results-title': c.resultsTitle,
+                'results-empty': c.resultsEmpty
+            };
+
+            Object.entries(updates).forEach(([id, text]) => {
+                const element = document.getElementById(id);
+                if (element) element.textContent = text;
             });
+
+            // Update placeholder
+            const chatInput = document.getElementById('chat-input');
+            if (chatInput) chatInput.placeholder = c.chatPlaceholder;
+        }
+
+        // Chat functionality
+        function setupChatInput() {
+            const input = document.getElementById('chat-input');
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            addMessage('user', message);
+            input.value = '';
+
+            // Simulate AI response
+            setTimeout(() => {
+                const response = generateAIResponse(message);
+                addMessage('assistant', response);
+            }, 1000);
+        }
+
+        function addMessage(type, text) {
+            const messagesContainer = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.innerHTML = `<div class="message-bubble">${text}</div>`;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function generateAIResponse(question) {
+            const responses = {
+                tr: {
+                    acil: 'Acil servis zemin katta bulunmaktadır. Ana girişten içeri girdiğinizde sol tarafta görebilirsiniz.',
+                    doktor: 'Poliklinikler 1. katta yer almaktadır. Hangi bölüm doktoru arıyorsunuz?',
+                    ameliyathane: 'Ameliyathaneler 3. katta bulunmaktadır. Ziyaretçi girişi kısıtlıdır.',
+                    laboratuvar: 'Laboratuvar zemin katta, acil servisin yanındadır. Kan tahlili için randevu gereklidir.',
+                    radyoloji: 'Radyoloji bölümü bodrum katta bulunmaktadır. MR, BT ve röntgen hizmetleri verilmektedir.',
+                    default: 'Size yardımcı olmaya çalışayım. Acil servis, poliklinikler, ameliyathane, laboratuvar veya radyoloji hakkında soru sorabilirsiniz.'
+                },
+                en: {
+                    emergency: 'The emergency department is located on the ground floor. You can see it on the left side when you enter through the main entrance.',
+                    doctor: 'Outpatient clinics are located on the 1st floor. Which department doctor are you looking for?',
+                    surgery: 'Operating rooms are located on the 3rd floor. Visitor access is restricted.',
+                    laboratory: 'The laboratory is on the ground floor, next to the emergency department. An appointment is required for blood tests.',
+                    radiology: 'The radiology department is located in the basement. MRI, CT and X-ray services are provided.',
+                    default: 'Let me try to help you. You can ask questions about emergency department, outpatient clinics, operating rooms, laboratory or radiology.'
+                },
+                bg: {
+                    спешен: 'Спешното отделение се намира на приземния етаж. Можете да го видите от лявата страна, когато влезете през главния вход.',
+                    доктор: 'Амбулаторните клиники се намират на 1-ви етаж. Кой лекар от коя специалност търсите?',
+                    операция: 'Операционните зали се намират на 3-ти етаж. Достъпът за посетители е ограничен.',
+                    лаборатория: 'Лабораторията е на приземния етаж, до спешното отделение. За кръвни изследвания е необходима среща.',
+                    радиология: 'Радиологичното отделение се намира в мазето. Предоставят се услуги за МРТ, КТ и рентген.',
+                    default: 'Нека се опитам да ви помогна. Можете да задавате въпроси за спешното отделение, амбулаторните клиники, операционните зали, лабораторията или радиологията.'
+                }
+            };
+
+            const langResponses = responses[currentLanguage];
+            const lowerQuestion = question.toLowerCase();
             
-            // Update UI elements
-            document.getElementById('menu-title').textContent = uiTexts.menuTitle;
-            document.getElementById('help-title').textContent = uiTexts.helpTitle;
-            document.getElementById('help-text').textContent = uiTexts.helpText;
-            document.getElementById('footer-text').textContent = uiTexts.footerText;
-            document.getElementById('back-btn').textContent = uiTexts.backBtn;
-            document.getElementById('next-btn').textContent = uiTexts.nextBtn;
-            document.getElementById('map-loading').textContent = uiTexts.mapLoading;
-            document.getElementById('feature1-title').textContent = uiTexts.feature1Title;
-            document.getElementById('feature1-desc').textContent = uiTexts.feature1Desc;
-            document.getElementById('feature2-title').textContent = uiTexts.feature2Title;
-            document.getElementById('feature2-desc').textContent = uiTexts.feature2Desc;
+            for (const [key, response] of Object.entries(langResponses)) {
+                if (lowerQuestion.includes(key)) {
+                    return response;
+                }
+            }
+            
+            return langResponses.default;
+        }
+
+        function toggleVoice() {
+            const button = document.getElementById('voice-button');
+            if (!isRecording) {
+                // Start recording
+                button.classList.add('recording');
+                isRecording = true;
+                
+                // Simulate voice recognition
+                setTimeout(() => {
+                    button.classList.remove('recording');
+                    isRecording = false;
+                    
+                    // Add simulated voice message
+                    const voiceMessage = currentLanguage === 'tr' ? 'Acil servis nerede?' : 
+                                       currentLanguage === 'en' ? 'Where is the emergency room?' : 
+                                       'Къде е спешното отделение?';
+                    addMessage('user', voiceMessage + ' (Sesli)');
+                    
+                    setTimeout(() => {
+                        const response = generateAIResponse(voiceMessage);
+                        addMessage('assistant', response);
+                    }, 1000);
+                }, 3000);
+            }
+        }
+
+        // Translator functionality
+        function connectTranslator(lang) {
+            const link = teamsLinks[lang];
+            // In real implementation, this would open Teams link
+            const message = currentLanguage === 'tr' ? 'Tercümana bağlanılıyor' : 
+                           currentLanguage === 'en' ? 'Connecting to translator' : 
+                           'Свързване с преводач';
+            alert(message + '...\n\nTeams Link: ' + link);
+        }
+
+        // Patient info functionality
+        function searchPatientInfo(event) {
+            event.preventDefault();
+            
+            const tc = document.getElementById('tc-input').value;
+            const name = document.getElementById('name-input').value;
+            const birth = document.getElementById('birth-input').value;
+            
+            // Simulate patient data search
+            setTimeout(() => {
+                displayPatientResults(name);
+            }, 2000);
+        }
+
+        function displayPatientResults(patientName) {
+            const resultsContainer = document.getElementById('patient-results-content');
+            
+            // Mock patient data
+            const mockResults = [
+                {
+                    title: currentLanguage === 'tr' ? 'Kardiyoloji Randevusu' : 
+                           currentLanguage === 'en' ? 'Cardiology Appointment' : 
+                           'Кардиологичен преглед',
+                    date: '15.02.2025 - 14:30'
+                },
+                {
+                    title: currentLanguage === 'tr' ? 'Kan Tahlili Sonucu' : 
+                           currentLanguage === 'en' ? 'Blood Test Result' : 
+                           'Резултат от кръвен тест',
+                    date: '10.02.2025'
+                },
+                {
+                    title: currentLanguage === 'tr' ? 'Göğüs Röntgeni' : 
+                           currentLanguage === 'en' ? 'Chest X-Ray' : 
+                           'Рентген на гърдите',
+                    date: '05.02.2025'
+                }
+            ];
+            
+            resultsContainer.innerHTML = mockResults.map(function(result) {
+                return '<div class="result-item">' +
+                       '<div class="result-title">' + result.title + '</div>' +
+                       '<div class="result-date">' + result.date + '</div>' +
+                       '</div>';
+            }).join('');
         }
 
         // Initialize when page loads
