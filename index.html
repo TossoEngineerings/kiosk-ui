@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hastane Kiosk Sistemi</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
     <style>
         * {
             margin: 0;
@@ -13,209 +12,93 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             height: 100vh;
             overflow: hidden;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            user-select: none;
         }
 
-        /* Screens */
         .screen {
-            display: none;
+            width: 100%;
             height: 100vh;
+            display: none;
             position: relative;
         }
 
         .screen.active {
             display: flex;
             flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
-        /* Welcome Screen */
+        /* Ana Ekran */
         .welcome-screen {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .welcome-content {
-            text-align: center;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
-            z-index: 2;
+            text-align: center;
+            cursor: pointer;
         }
 
-        .hospital-logo {
-            width: 120px;
-            height: 120px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 2rem;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .welcome-title {
+        .welcome-text {
             font-size: 4rem;
             font-weight: bold;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-            opacity: 0;
-            animation: fadeInOut 4s infinite;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 2rem;
         }
 
-        .welcome-subtitle {
-            font-size: 1.5rem;
-            opacity: 0.9;
-            margin-bottom: 3rem;
-        }
-
-        .tap-instruction {
-            font-size: 1.2rem;
-            opacity: 0.8;
+        .hospital-icon {
+            font-size: 8rem;
+            margin-bottom: 2rem;
             animation: pulse 2s infinite;
         }
 
-        @keyframes fadeInOut {
-            0%, 100% { opacity: 0; transform: translateY(20px); }
-            50% { opacity: 1; transform: translateY(0); }
-        }
-
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
 
-        /* Main Menu Screen */
-        .main-menu-screen {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            position: relative;
-        }
-
-        .menu-header {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 1.5rem 2rem;
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .menu-logo {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .menu-logo-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
-
-        .menu-title {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .language-selector {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .lang-btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 25px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            backdrop-filter: blur(10px);
-        }
-
-        .lang-btn.active {
-            background: #667eea;
-            color: white;
-            transform: scale(1.1);
-        }
-
-        .lang-btn:not(.active) {
-            background: rgba(255, 255, 255, 0.7);
-            color: #333;
-        }
-
-        .lang-btn:not(.active):hover {
-            background: rgba(255, 255, 255, 0.9);
-            transform: scale(1.05);
-        }
-
-        .menu-content {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        /* Menu Ekranı */
+        .menu-screen {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
             padding: 2rem;
         }
 
-        .menu-grid {
+        .menu-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 3rem;
+            gap: 2rem;
             max-width: 1200px;
+            margin: 0 auto;
         }
 
         .menu-button {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.9);
             border: none;
-            border-radius: 2rem;
+            border-radius: 20px;
             padding: 3rem 2rem;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             text-align: center;
-            min-height: 300px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
         }
 
         .menu-button:hover {
-            transform: translateY(-10px) scale(1.05);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            background: white;
         }
 
         .menu-button-icon {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-            color: white;
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #667eea;
         }
 
-        .ai-assistant { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-        .translator { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
-        .patient-info { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
-
-        .menu-button-title {
-            font-size: 1.5rem;
+        .menu-button-text {
+            font-size: 1.8rem;
             font-weight: bold;
             color: #333;
             margin-bottom: 0.5rem;
@@ -224,104 +107,83 @@
         .menu-button-desc {
             font-size: 1rem;
             color: #666;
-            line-height: 1.4;
         }
 
-        /* Back Button */
+        /* Geri Butonu */
         .back-button {
             position: absolute;
             top: 2rem;
-            right: 2rem;
+            left: 2rem;
             background: rgba(255, 255, 255, 0.9);
             border: none;
             border-radius: 50px;
-            padding: 1rem 1.5rem;
+            padding: 1rem 2rem;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 600;
-            transition: all 0.3s;
-            backdrop-filter: blur(10px);
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            transition: all 0.3s ease;
         }
 
         .back-button:hover {
             background: white;
-            transform: scale(1.05);
+            transform: scale(1.1);
         }
 
-        /* AI Assistant Screen */
-        .ai-screen {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .ai-header {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 1.5rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .ai-content {
-            flex: 1;
-            display: flex;
+        /* Akıllı Asistan Ekranı */
+        .assistant-screen {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
             padding: 2rem;
-            gap: 2rem;
         }
 
         .chat-container {
-            flex: 2;
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 1.5rem;
+            border-radius: 20px;
+            height: 70vh;
+            width: 90%;
+            max-width: 1000px;
+            margin: 0 auto;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .chat-header {
+            background: #667eea;
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
         }
 
         .chat-messages {
             flex: 1;
-            padding: 1.5rem;
+            padding: 1rem;
             overflow-y: auto;
-            max-height: 400px;
         }
 
         .message {
             margin-bottom: 1rem;
-            display: flex;
-            gap: 1rem;
+            padding: 1rem;
+            border-radius: 15px;
+            max-width: 80%;
         }
 
-        .message.user {
-            justify-content: flex-end;
-        }
-
-        .message.assistant {
-            justify-content: flex-start;
-        }
-
-        .message-bubble {
-            max-width: 70%;
-            padding: 1rem 1.5rem;
-            border-radius: 1.5rem;
-            font-size: 1rem;
-            line-height: 1.4;
-        }
-
-        .message.user .message-bubble {
+        .user-message {
             background: #667eea;
             color: white;
-            border-bottom-right-radius: 0.5rem;
+            margin-left: auto;
         }
 
-        .message.assistant .message-bubble {
-            background: #f0f0f0;
+        .assistant-message {
+            background: #f1f3f4;
             color: #333;
-            border-bottom-left-radius: 0.5rem;
         }
 
-        .chat-input-area {
-            padding: 1.5rem;
+        .chat-input-container {
+            padding: 1rem;
             border-top: 1px solid #eee;
             display: flex;
             gap: 1rem;
@@ -329,12 +191,11 @@
 
         .chat-input {
             flex: 1;
-            padding: 1rem 1.5rem;
-            border: 2px solid #eee;
+            padding: 1rem;
+            border: 2px solid #ddd;
             border-radius: 25px;
-            font-size: 1rem;
+            font-size: 1.1rem;
             outline: none;
-            transition: all 0.3s;
         }
 
         .chat-input:focus {
@@ -342,747 +203,444 @@
         }
 
         .send-button, .voice-button {
-            padding: 1rem;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .send-button {
             background: #667eea;
             color: white;
-        }
-
-        .voice-button {
-            background: #43e97b;
-            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
         }
 
         .send-button:hover, .voice-button:hover {
+            background: #5a6fd8;
             transform: scale(1.1);
         }
 
-        .voice-button.recording {
-            background: #ff4757;
-            animation: pulse 1s infinite;
-        }
-
-        .ai-info {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 1.5rem;
-            padding: 2rem;
-        }
-
-        .info-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 1rem;
-        }
-
-        .info-list {
-            list-style: none;
-        }
-
-        .info-list li {
-            padding: 0.5rem 0;
-            color: #666;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        /* Translator Screen */
+        /* Tercüman Ekranı */
         .translator-screen {
-            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-        }
-
-        .translator-content {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
             padding: 2rem;
         }
 
-        .translator-grid {
+        .translator-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .language-selection {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 2rem;
-            max-width: 900px;
-        }
-
-        .translator-button {
-            background: rgba(255, 255, 255, 0.95);
-            border: none;
-            border-radius: 1.5rem;
-            padding: 2rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .translator-button:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .translator-flag {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            margin: 0 auto 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-        }
-
-        .flag-tr { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
-        .flag-en { background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); }
-        .flag-bg { background: linear-gradient(135deg, #27ae60 0%, #229954 100%); }
-
-        .translator-lang {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #333;
-        }
-
-        /* Patient Info Screen */
-        .patient-screen {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-        }
-
-        .patient-content {
-            flex: 1;
-            display: flex;
-            padding: 2rem;
-            gap: 2rem;
-        }
-
-        .patient-form {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 1.5rem;
-            padding: 2rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid #eee;
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-
-        .form-input:focus {
-            border-color: #fa709a;
-            outline: none;
-        }
-
-        .submit-button {
-            background: #fa709a;
-            color: white;
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            width: 100%;
-        }
-
-        .submit-button:hover {
-            background: #e91e63;
-            transform: translateY(-2px);
-        }
-
-        .patient-results {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 1.5rem;
-            padding: 2rem;
-        }
-
-        .results-empty {
-            text-align: center;
-            color: #666;
-            font-style: italic;
             margin-top: 2rem;
         }
 
-        .result-item {
+        .language-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 2rem;
+            cursor: pointer;
+            font-size: 1.3rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .language-button:hover {
+            background: #5a6fd8;
+            transform: translateY(-5px);
+        }
+
+        /* Hasta Bilgilendirme Ekranı */
+        .patient-screen {
+            background: linear-gradient(135deg, #a8caba 0%, #5d4e75 100%);
+            padding: 2rem;
+        }
+
+        .patient-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .patient-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .form-group input {
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #667eea;
+        }
+
+        .search-button {
+            grid-column: span 2;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 1rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-button:hover {
+            background: #5a6fd8;
+        }
+
+        .patient-results {
+            margin-top: 2rem;
+            padding: 1.5rem;
             background: #f8f9fa;
-            border-radius: 0.5rem;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .result-item {
+            background: white;
             padding: 1rem;
             margin-bottom: 1rem;
-            border-left: 4px solid #fa709a;
-        }
-
-        .result-title {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-
-        .result-date {
-            font-size: 0.9rem;
-            color: #666;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         /* Responsive */
-        @media (max-width: 1024px) {
-            .menu-grid {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            
-            .translator-grid {
+        @media (max-width: 768px) {
+            .menu-container {
                 grid-template-columns: 1fr;
             }
             
-            .ai-content, .patient-content {
-                flex-direction: column;
+            .patient-form {
+                grid-template-columns: 1fr;
             }
-        }
-
-        .hidden {
-            display: none !important;
+            
+            .language-selection {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Welcome Screen -->
-    <div class="screen active" id="welcome-screen">
-        <div class="welcome-screen" onclick="showMainMenu()">
-            <div class="welcome-content">
-                <div class="hospital-logo">
-                    <i data-lucide="heart-pulse" style="width: 60px; height: 60px; color: white;"></i>
+    <!-- Ana Ekran -->
+    <div class="screen welcome-screen active" id="welcomeScreen">
+        <div class="hospital-icon">🏥</div>
+        <div class="welcome-text" id="welcomeText">Hoşgeldiniz</div>
+        <p style="font-size: 1.5rem; opacity: 0.8;">Devam etmek için ekrana dokunun</p>
+    </div>
+
+    <!-- Menu Ekranı -->
+    <div class="screen menu-screen" id="menuScreen">
+        <button class="back-button" onclick="showScreen('welcomeScreen')">← Ana Ekran</button>
+        <div class="menu-container">
+            <button class="menu-button" onclick="showScreen('assistantScreen')">
+                <div class="menu-button-icon">🤖</div>
+                <div class="menu-button-text">Akıllı Asistan</div>
+                <div class="menu-button-desc">Yapay zeka ile konuşun, yol tarifi alın</div>
+            </button>
+            <button class="menu-button" onclick="showScreen('translatorScreen')">
+                <div class="menu-button-icon">🌐</div>
+                <div class="menu-button-text">Tercümana Bağlan</div>
+                <div class="menu-button-desc">Canlı tercüman desteği alın</div>
+            </button>
+            <button class="menu-button" onclick="showScreen('patientScreen')">
+                <div class="menu-button-icon">📋</div>
+                <div class="menu-button-text">Hasta Bilgilendirme</div>
+                <div class="menu-button-desc">Randevu ve test sonuçlarınızı görün</div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Akıllı Asistan Ekranı -->
+    <div class="screen assistant-screen" id="assistantScreen">
+        <button class="back-button" onclick="showScreen('menuScreen')">← Geri</button>
+        <div class="chat-container">
+            <div class="chat-header">Akıllı Asistan - Size nasıl yardımcı olabilirim?</div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message assistant-message">
+                    Merhaba! Ben hastane akıllı asistanınızım. Size doktor odaları, ameliyathaneler, bölümler hakkında bilgi verebilirim. Ne öğrenmek istiyorsunuz?
                 </div>
-                <h1 class="welcome-title" id="welcome-title">Hoş Geldiniz</h1>
-                <p class="welcome-subtitle" id="welcome-subtitle">Sağlık Hizmetleri Kiosk Sistemi</p>
-                <p class="tap-instruction" id="tap-instruction">Devam etmek için ekrana dokunun</p>
+            </div>
+            <div class="chat-input-container">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Mesajınızı yazın..." onkeypress="handleChatKeyPress(event)">
+                <button class="voice-button" onclick="toggleVoice()" id="voiceButton">🎤</button>
+                <button class="send-button" onclick="sendMessage()">➤</button>
             </div>
         </div>
     </div>
 
-    <!-- Main Menu Screen -->
-    <div class="screen" id="main-menu-screen">
-        <div class="main-menu-screen">
-            <div class="menu-header">
-                <div class="menu-logo">
-                    <div class="menu-logo-icon">
-                        <i data-lucide="hospital" style="width: 30px; height: 30px;"></i>
-                    </div>
-                    <h1 class="menu-title" id="menu-main-title">Sağlık Hizmetleri</h1>
-                </div>
-                <div class="language-selector">
-                    <button class="lang-btn active" onclick="setLanguage('tr')">TR</button>
-                    <button class="lang-btn" onclick="setLanguage('en')">EN</button>
-                    <button class="lang-btn" onclick="setLanguage('bg')">BG</button>
-                </div>
-            </div>
-            <div class="menu-content">
-                <div class="menu-grid">
-                    <button class="menu-button" onclick="showScreen('ai-screen')">
-                        <div class="menu-button-icon ai-assistant">
-                            <i data-lucide="bot" style="width: 50px; height: 50px;"></i>
-                        </div>
-                        <h3 class="menu-button-title" id="ai-title">Akıllı Asistan</h3>
-                        <p class="menu-button-desc" id="ai-desc">Hastane içi yönlendirme ve bilgi alma</p>
-                    </button>
-                    <button class="menu-button" onclick="showScreen('translator-screen')">
-                        <div class="menu-button-icon translator">
-                            <i data-lucide="languages" style="width: 50px; height: 50px;"></i>
-                        </div>
-                        <h3 class="menu-button-title" id="translator-title">Tercümana Bağlan</h3>
-                        <p class="menu-button-desc" id="translator-desc">Canlı tercüman desteği alın</p>
-                    </button>
-                    <button class="menu-button" onclick="showScreen('patient-screen')">
-                        <div class="menu-button-icon patient-info">
-                            <i data-lucide="user-check" style="width: 50px; height: 50px;"></i>
-                        </div>
-                        <h3 class="menu-button-title" id="patient-title">Hasta Bilgilendirme</h3>
-                        <p class="menu-button-desc" id="patient-desc">Randevu ve test sonuçlarınızı görün</p>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- AI Assistant Screen -->
-    <div class="screen" id="ai-screen">
-        <div class="ai-screen">
-            <div class="ai-header">
-                <h2 id="ai-header-title">Akıllı Asistan</h2>
-                <button class="back-button" onclick="showMainMenu()">
-                    <i data-lucide="arrow-left" style="width: 20px; height: 20px;"></i>
-                    <span id="back-text">Geri</span>
+    <!-- Tercüman Ekranı -->
+    <div class="screen translator-screen" id="translatorScreen">
+        <button class="back-button" onclick="showScreen('menuScreen')">← Geri</button>
+        <div class="translator-container">
+            <h2>Tercüman Hizmeti</h2>
+            <p>Hangi dilde tercüman desteği almak istiyorsunuz?</p>
+            <div class="language-selection">
+                <button class="language-button" onclick="connectToTranslator('turkish')">
+                    🇹🇷<br>Türkçe
+                </button>
+                <button class="language-button" onclick="connectToTranslator('english')">
+                    🇬🇧<br>English
+                </button>
+                <button class="language-button" onclick="connectToTranslator('bulgarian')">
+                    🇧🇬<br>Български
                 </button>
             </div>
-            <div class="ai-content">
-                <div class="chat-container">
-                    <div class="chat-messages" id="chat-messages">
-                        <div class="message assistant">
-                            <div class="message-bubble" id="ai-welcome-msg">
-                                Merhaba! Size nasıl yardımcı olabilirim? Hastane içi yönlendirme, bölümler veya doktorlar hakkında sorularınızı cevaplayabilirim.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="chat-input-area">
-                        <input type="text" class="chat-input" id="chat-input" placeholder="Sorunuzu yazın...">
-                        <button class="voice-button" id="voice-button" onclick="toggleVoice()">
-                            <i data-lucide="mic" style="width: 20px; height: 20px;"></i>
-                        </button>
-                        <button class="send-button" onclick="sendMessage()">
-                            <i data-lucide="send" style="width: 20px; height: 20px;"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="ai-info">
-                    <h3 class="info-title" id="ai-info-title">Yardımcı Bilgiler</h3>
-                    <ul class="info-list" id="ai-info-list">
-                        <li><i data-lucide="map-pin" style="width: 16px; height: 16px;"></i> Acil Servis: Zemin Kat</li>
-                        <li><i data-lucide="stethoscope" style="width: 16px; height: 16px;"></i> Poliklinikler: 1. Kat</li>
-                        <li><i data-lucide="bed" style="width: 16px; height: 16px;"></i> Yataklı Servis: 2-4. Kat</li>
-                        <li><i data-lucide="microscope" style="width: 16px; height: 16px;"></i> Laboratuvar: Zemin Kat</li>
-                        <li><i data-lucide="scan" style="width: 16px; height: 16px;"></i> Radyoloji: Bodrum Kat</li>
-                    </ul>
-                </div>
-            </div>
         </div>
     </div>
 
-    <!-- Translator Screen -->
-    <div class="screen" id="translator-screen">
-        <div class="translator-screen">
-            <div class="ai-header">
-                <h2 id="translator-header-title">Tercümana Bağlan</h2>
-                <button class="back-button" onclick="showMainMenu()">
-                    <i data-lucide="arrow-left" style="width: 20px; height: 20px;"></i>
-                    <span id="back-text-2">Geri</span>
-                </button>
-            </div>
-            <div class="translator-content">
-                <div class="translator-grid">
-                    <button class="translator-button" onclick="connectTranslator('tr')">
-                        <div class="translator-flag flag-tr">🇹🇷</div>
-                        <div class="translator-lang" id="turkish-translator">Türkçe Tercüman</div>
-                    </button>
-                    <button class="translator-button" onclick="connectTranslator('en')">
-                        <div class="translator-flag flag-en">🇺🇸</div>
-                        <div class="translator-lang" id="english-translator">English Translator</div>
-                    </button>
-                    <button class="translator-button" onclick="connectTranslator('bg')">
-                        <div class="translator-flag flag-bg">🇧🇬</div>
-                        <div class="translator-lang" id="bulgarian-translator">Български Преводач</div>
-                    </button>
+    <!-- Hasta Bilgilendirme Ekranı -->
+    <div class="screen patient-screen" id="patientScreen">
+        <button class="back-button" onclick="showScreen('menuScreen')">← Geri</button>
+        <div class="patient-container">
+            <h2>Hasta Bilgilendirme Sistemi</h2>
+            <div class="patient-form">
+                <div class="form-group">
+                    <label for="tcNo">TC Kimlik No:</label>
+                    <input type="text" id="tcNo" placeholder="11 haneli TC numaranız">
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Patient Info Screen -->
-    <div class="screen" id="patient-screen">
-        <div class="patient-screen">
-            <div class="ai-header">
-                <h2 id="patient-header-title">Hasta Bilgilendirme</h2>
-                <button class="back-button" onclick="showMainMenu()">
-                    <i data-lucide="arrow-left" style="width: 20px; height: 20px;"></i>
-                    <span id="back-text-3">Geri</span>
-                </button>
-            </div>
-            <div class="patient-content">
-                <div class="patient-form">
-                    <h3 class="info-title" id="patient-form-title">Kişisel Bilgilerinizi Girin</h3>
-                    <form onsubmit="searchPatientInfo(event)">
-                        <div class="form-group">
-                            <label class="form-label" id="tc-label">TC Kimlik No:</label>
-                            <input type="text" class="form-input" id="tc-input" maxlength="11" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" id="name-label">Ad Soyad:</label>
-                            <input type="text" class="form-input" id="name-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" id="birth-label">Doğum Tarihi:</label>
-                            <input type="date" class="form-input" id="birth-input" required>
-                        </div>
-                        <button type="submit" class="submit-button" id="search-button">Bilgileri Getir</button>
-                    </form>
+                <div class="form-group">
+                    <label for="birthDate">Doğum Tarihi:</label>
+                    <input type="date" id="birthDate">
                 </div>
-                <div class="patient-results">
-                    <h3 class="info-title" id="results-title">Sonuçlar</h3>
-                    <div id="patient-results-content">
-                        <div class="results-empty" id="results-empty">
-                            Bilgilerinizi girerek randevu ve test sonuçlarınızı görüntüleyebilirsiniz.
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label for="firstName">Ad:</label>
+                    <input type="text" id="firstName" placeholder="Adınız">
                 </div>
+                <div class="form-group">
+                    <label for="lastName">Soyad:</label>
+                    <input type="text" id="lastName" placeholder="Soyadınız">
+                </div>
+                <button class="search-button" onclick="searchPatientInfo()">Bilgileri Getir</button>
+            </div>
+            <div class="patient-results" id="patientResults">
+                <h3>Hasta Bilgileri</h3>
+                <div id="resultsContent"></div>
             </div>
         </div>
     </div>
 
     <script>
-        // Language content
-        const content = {
-            tr: {
-                welcomeTitle: 'Hoş Geldiniz',
-                welcomeSubtitle: 'Sağlık Hizmetleri Kiosk Sistemi',
-                tapInstruction: 'Devam etmek için ekrana dokunun',
-                menuMainTitle: 'Sağlık Hizmetleri',
-                aiTitle: 'Akıllı Asistan',
-                aiDesc: 'Hastane içi yönlendirme ve bilgi alma',
-                translatorTitle: 'Tercümana Bağlan',
-                translatorDesc: 'Canlı tercüman desteği alın',
-                patientTitle: 'Hasta Bilgilendirme',
-                patientDesc: 'Randevu ve test sonuçlarınızı görün',
-                back: 'Geri',
-                aiHeaderTitle: 'Akıllı Asistan',
-                aiWelcomeMsg: 'Merhaba! Size nasıl yardımcı olabilirim? Hastane içi yönlendirme, bölümler veya doktorlar hakkında sorularınızı cevaplayabilirim.',
-                aiInfoTitle: 'Yardımcı Bilgiler',
-                translatorHeaderTitle: 'Tercümana Bağlan',
-                turkishTranslator: 'Türkçe Tercüman',
-                englishTranslator: 'English Translator',
-                bulgarianTranslator: 'Български Преводач',
-                patientHeaderTitle: 'Hasta Bilgilendirme',
-                patientFormTitle: 'Kişisel Bilgilerinizi Girin',
-                tcLabel: 'TC Kimlik No:',
-                nameLabel: 'Ad Soyad:',
-                birthLabel: 'Doğum Tarihi:',
-                searchButton: 'Bilgileri Getir',
-                resultsTitle: 'Sonuçlar',
-                resultsEmpty: 'Bilgilerinizi girerek randevu ve test sonuçlarınızı görüntüleyebilirsiniz.',
-                chatPlaceholder: 'Sorunuzu yazın...'
-            },
-            en: {
-                welcomeTitle: 'Welcome',
-                welcomeSubtitle: 'Healthcare Kiosk System',
-                tapInstruction: 'Touch the screen to continue',
-                menuMainTitle: 'Healthcare Services',
-                aiTitle: 'AI Assistant',
-                aiDesc: 'Hospital navigation and information',
-                translatorTitle: 'Connect to Translator',
-                translatorDesc: 'Get live translator support',
-                patientTitle: 'Patient Information',
-                patientDesc: 'View your appointments and test results',
-                back: 'Back',
-                aiHeaderTitle: 'AI Assistant',
-                aiWelcomeMsg: 'Hello! How can I help you? I can answer questions about hospital navigation, departments, or doctors.',
-                aiInfoTitle: 'Helpful Information',
-                translatorHeaderTitle: 'Connect to Translator',
-                turkishTranslator: 'Türkçe Tercüman',
-                englishTranslator: 'English Translator',
-                bulgarianTranslator: 'Български Преводач',
-                patientHeaderTitle: 'Patient Information',
-                patientFormTitle: 'Enter Your Personal Information',
-                tcLabel: 'ID Number:',
-                nameLabel: 'Full Name:',
-                birthLabel: 'Birth Date:',
-                searchButton: 'Get Information',
-                resultsTitle: 'Results',
-                resultsEmpty: 'Enter your information to view appointments and test results.',
-                chatPlaceholder: 'Type your question...'
-            },
-            bg: {
-                welcomeTitle: 'Добре дошли',
-                welcomeSubtitle: 'Система за здравни услуги',
-                tapInstruction: 'Докоснете екрана, за да продължите',
-                menuMainTitle: 'Здравни услуги',
-                aiTitle: 'ИИ Асистент',
-                aiDesc: 'Навигация в болницата и информация',
-                translatorTitle: 'Свържете се с преводач',
-                translatorDesc: 'Получете подкрепа от преводач на живо',
-                patientTitle: 'Информация за пациента',
-                patientDesc: 'Вижте вашите срещи и резултати от тестове',
-                back: 'Назад',
-                aiHeaderTitle: 'ИИ Асистент',
-                aiWelcomeMsg: 'Здравейте! Как мога да ви помогна? Мога да отговоря на въпроси за навигацията в болницата, отделенията или лекарите.',
-                aiInfoTitle: 'Полезна информация',
-                translatorHeaderTitle: 'Свържете се с преводач',
-                turkishTranslator: 'Türkçe Tercüman',
-                englishTranslator: 'English Translator',
-                bulgarianTranslator: 'Български Преводач',
-                patientHeaderTitle: 'Информация за пациента',
-                patientFormTitle: 'Въведете вашата лична информация',
-                tcLabel: 'ЕГН:',
-                nameLabel: 'Име и фамилия:',
-                birthLabel: 'Дата на раждане:',
-                searchButton: 'Получи информация',
-                resultsTitle: 'Резултати',
-                resultsEmpty: 'Въведете информацията си, за да видите срещи и резултати от тестове.',
-                chatPlaceholder: 'Напишете въпроса си...'
-            }
+        // Çok dilli karşılama metinleri
+        const welcomeTexts = {
+            tr: "Hoşgeldiniz",
+            en: "Welcome",
+            bg: "Добре дошли"
         };
 
-        // Teams links for translators
-        const teamsLinks = {
-            tr: 'https://teams.microsoft.com/l/meetup-join/tr-translator-link',
-            en: 'https://teams.microsoft.com/l/meetup-join/en-translator-link',
-            bg: 'https://teams.microsoft.com/l/meetup-join/bg-translator-link'
-        };
+        let currentLanguage = 0;
+        const languages = ['tr', 'en', 'bg'];
+        let welcomeInterval;
+        let isListening = false;
+        let chatMessages = [];
 
-        let currentLanguage = 'tr';
-        let welcomeTextIndex = 0;
-        let isRecording = false;
-
-        // Initialize
-        function init() {
-            lucide.createIcons();
-            startWelcomeRotation();
-            setupChatInput();
-        }
-
-        // Welcome text rotation
+        // Sayfaya yüklendiğinde karşılama metnini döndür
         function startWelcomeRotation() {
-            const languages = ['tr', 'en', 'bg'];
-            setInterval(() => {
-                const lang = languages[welcomeTextIndex];
-                document.getElementById('welcome-title').textContent = content[lang].welcomeTitle;
-                document.getElementById('welcome-subtitle').textContent = content[lang].welcomeSubtitle;
-                document.getElementById('tap-instruction').textContent = content[lang].tapInstruction;
-                welcomeTextIndex = (welcomeTextIndex + 1) % languages.length;
-            }, 3000);
+            welcomeInterval = setInterval(() => {
+                currentLanguage = (currentLanguage + 1) % languages.length;
+                document.getElementById('welcomeText').textContent = 
+                    welcomeTexts[languages[currentLanguage]];
+            }, 2000);
         }
 
-        // Show screens
+        function stopWelcomeRotation() {
+            if (welcomeInterval) {
+                clearInterval(welcomeInterval);
+            }
+        }
+
+        // Ekran değiştirme fonksiyonu
         function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-        }
-
-        function showMainMenu() {
-            showScreen('main-menu-screen');
-        }
-
-        // Language switching
-        function setLanguage(lang) {
-            currentLanguage = lang;
-            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            updateContent();
-        }
-
-        function updateContent() {
-            const c = content[currentLanguage];
+            // Tüm ekranları gizle
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
             
-            // Update all text elements
-            const updates = {
-                'menu-main-title': c.menuMainTitle,
-                'ai-title': c.aiTitle,
-                'ai-desc': c.aiDesc,
-                'translator-title': c.translatorTitle,
-                'translator-desc': c.translatorDesc,
-                'patient-title': c.patientTitle,
-                'patient-desc': c.patientDesc,
-                'back-text': c.back,
-                'back-text-2': c.back,
-                'back-text-3': c.back,
-                'ai-header-title': c.aiHeaderTitle,
-                'ai-welcome-msg': c.aiWelcomeMsg,
-                'ai-info-title': c.aiInfoTitle,
-                'translator-header-title': c.translatorHeaderTitle,
-                'turkish-translator': c.turkishTranslator,
-                'english-translator': c.englishTranslator,
-                'bulgarian-translator': c.bulgarianTranslator,
-                'patient-header-title': c.patientHeaderTitle,
-                'patient-form-title': c.patientFormTitle,
-                'tc-label': c.tcLabel,
-                'name-label': c.nameLabel,
-                'birth-label': c.birthLabel,
-                'search-button': c.searchButton,
-                'results-title': c.resultsTitle,
-                'results-empty': c.resultsEmpty
-            };
+            // Belirtilen ekranı göster
+            document.getElementById(screenId).classList.add('active');
+            
+            if (screenId === 'welcomeScreen') {
+                startWelcomeRotation();
+            } else {
+                stopWelcomeRotation();
+            }
 
-            Object.entries(updates).forEach(([id, text]) => {
-                const element = document.getElementById(id);
-                if (element) element.textContent = text;
-            });
-
-            // Update placeholder
-            const chatInput = document.getElementById('chat-input');
-            if (chatInput) chatInput.placeholder = c.chatPlaceholder;
+            // Chat mesajlarını temizle
+            if (screenId !== 'assistantScreen') {
+                chatMessages = [];
+                const chatContainer = document.getElementById('chatMessages');
+                if (chatContainer) {
+                    chatContainer.innerHTML = `
+                        <div class="message assistant-message">
+                            Merhaba! Ben hastane akıllı asistanınızım. Size doktor odaları, ameliyathaneler, bölümler hakkında bilgi verebilirim. Ne öğrenmek istiyorsunuz?
+                        </div>
+                    `;
+                }
+            }
         }
 
-        // Chat functionality
-        function setupChatInput() {
-            const input = document.getElementById('chat-input');
-            input.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    sendMessage();
-                }
-            });
+        // Ana ekrana tıklama
+        document.getElementById('welcomeScreen').addEventListener('click', () => {
+            showScreen('menuScreen');
+        });
+
+        // Chat fonksiyonları
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
         }
 
         function sendMessage() {
-            const input = document.getElementById('chat-input');
+            const input = document.getElementById('chatInput');
             const message = input.value.trim();
-            if (!message) return;
-
-            addMessage('user', message);
-            input.value = '';
-
-            // Simulate AI response
-            setTimeout(() => {
-                const response = generateAIResponse(message);
-                addMessage('assistant', response);
-            }, 1000);
+            
+            if (message) {
+                addMessage(message, 'user');
+                input.value = '';
+                
+                // Yapay zeka cevabı simülasyonu
+                setTimeout(() => {
+                    const response = generateAIResponse(message);
+                    addMessage(response, 'assistant');
+                }, 1000);
+            }
         }
 
-        function addMessage(type, text) {
-            const messagesContainer = document.getElementById('chat-messages');
+        function addMessage(text, sender) {
+            const messagesContainer = document.getElementById('chatMessages');
             const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${type}`;
-            messageDiv.innerHTML = `<div class="message-bubble">${text}</div>`;
+            messageDiv.className = `message ${sender}-message`;
+            messageDiv.textContent = text;
             messagesContainer.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
         function generateAIResponse(question) {
             const responses = {
-                tr: {
-                    acil: 'Acil servis zemin katta bulunmaktadır. Ana girişten içeri girdiğinizde sol tarafta görebilirsiniz.',
-                    doktor: 'Poliklinikler 1. katta yer almaktadır. Hangi bölüm doktoru arıyorsunuz?',
-                    ameliyathane: 'Ameliyathaneler 3. katta bulunmaktadır. Ziyaretçi girişi kısıtlıdır.',
-                    laboratuvar: 'Laboratuvar zemin katta, acil servisin yanındadır. Kan tahlili için randevu gereklidir.',
-                    radyoloji: 'Radyoloji bölümü bodrum katta bulunmaktadır. MR, BT ve röntgen hizmetleri verilmektedir.',
-                    default: 'Size yardımcı olmaya çalışayım. Acil servis, poliklinikler, ameliyathane, laboratuvar veya radyoloji hakkında soru sorabilirsiniz.'
-                },
-                en: {
-                    emergency: 'The emergency department is located on the ground floor. You can see it on the left side when you enter through the main entrance.',
-                    doctor: 'Outpatient clinics are located on the 1st floor. Which department doctor are you looking for?',
-                    surgery: 'Operating rooms are located on the 3rd floor. Visitor access is restricted.',
-                    laboratory: 'The laboratory is on the ground floor, next to the emergency department. An appointment is required for blood tests.',
-                    radiology: 'The radiology department is located in the basement. MRI, CT and X-ray services are provided.',
-                    default: 'Let me try to help you. You can ask questions about emergency department, outpatient clinics, operating rooms, laboratory or radiology.'
-                },
-                bg: {
-                    спешен: 'Спешното отделение се намира на приземния етаж. Можете да го видите от лявата страна, когато влезете през главния вход.',
-                    доктор: 'Амбулаторните клиники се намират на 1-ви етаж. Кой лекар от коя специалност търсите?',
-                    операция: 'Операционните зали се намират на 3-ти етаж. Достъпът за посетители е ограничен.',
-                    лаборатория: 'Лабораторията е на приземния етаж, до спешното отделение. За кръвни изследвания е необходима среща.',
-                    радиология: 'Радиологичното отделение се намира в мазето. Предоставят се услуги за МРТ, КТ и рентген.',
-                    default: 'Нека се опитам да ви помогна. Можете да задавате въпроси за спешното отделение, амбулаторните клиники, операционните зали, лабораторията или радиологията.'
-                }
+                'doktor': 'Doktor odaları 2. katta bulunmaktadır. Asansör ile çıkabilir veya merdivenleri kullanabilirsiniz.',
+                'ameliyathane': 'Ameliyathaneler 3. kattadır. Ziyaretçi girişi kısıtlıdır.',
+                'acil': 'Acil servis giriş katında, ana girişin solundadır.',
+                'otopark': 'Otopark hastanenin arkasında bulunmaktadır. Ücretsizdir.',
+                'laboratuvar': 'Laboratuvar 1. kattadır. Kan tahlili için randevu gereklidir.',
+                'eczane': 'Eczane giriş katında, kafeteryenin yanındadır.',
+                'kafeterya': 'Kafeterya giriş katında bulunmaktadır. 07:00-22:00 arası açıktır.'
             };
 
-            const langResponses = responses[currentLanguage];
             const lowerQuestion = question.toLowerCase();
             
-            for (const [key, response] of Object.entries(langResponses)) {
+            for (let key in responses) {
                 if (lowerQuestion.includes(key)) {
-                    return response;
+                    return responses[key];
                 }
             }
             
-            return langResponses.default;
+            return 'Bu konuda size yardımcı olmaya çalışayım. Daha spesifik bir soru sorabilir misiniz? Örneğin: doktor odası, ameliyathane, acil servis, otopark gibi.';
         }
 
         function toggleVoice() {
-            const button = document.getElementById('voice-button');
-            if (!isRecording) {
-                // Start recording
-                button.classList.add('recording');
-                isRecording = true;
+            const button = document.getElementById('voiceButton');
+            if (!isListening) {
+                // Ses dinleme başlat (simülasyon)
+                button.style.background = '#ff4444';
+                button.textContent = '🔴';
+                isListening = true;
                 
-                // Simulate voice recognition
+                // 3 saniye sonra dur
                 setTimeout(() => {
-                    button.classList.remove('recording');
-                    isRecording = false;
-                    
-                    // Add simulated voice message
-                    const voiceMessage = currentLanguage === 'tr' ? 'Acil servis nerede?' : 
-                                       currentLanguage === 'en' ? 'Where is the emergency room?' : 
-                                       'Къде е спешното отделение?';
-                    addMessage('user', voiceMessage + ' (Sesli)');
-                    
+                    button.style.background = '#667eea';
+                    button.textContent = '🎤';
+                    isListening = false;
+                    addMessage('Sesli mesaj alındı: "Doktor odası nerede?"', 'user');
                     setTimeout(() => {
-                        const response = generateAIResponse(voiceMessage);
-                        addMessage('assistant', response);
+                        addMessage('Doktor odaları 2. katta bulunmaktadır.', 'assistant');
                     }, 1000);
                 }, 3000);
             }
         }
 
-        // Translator functionality
-        function connectTranslator(lang) {
-            const link = teamsLinks[lang];
-            // In real implementation, this would open Teams link
-            const message = currentLanguage === 'tr' ? 'Tercümana bağlanılıyor' : 
-                           currentLanguage === 'en' ? 'Connecting to translator' : 
-                           'Свързване с преводач';
-            alert(message + '...\n\nTeams Link: ' + link);
+        // Tercüman bağlantısı
+        function connectToTranslator(language) {
+            const teamsLinks = {
+                turkish: 'https://teams.microsoft.com/turkish-translator',
+                english: 'https://teams.microsoft.com/english-translator',
+                bulgarian: 'https://teams.microsoft.com/bulgarian-translator'
+            };
+            
+            alert(`${language} tercümanına bağlanılıyor...\nTeams linki: ${teamsLinks[language]}\n\n(Bu bir demo uygulamasıdır)`);
         }
 
-        // Patient info functionality
-        function searchPatientInfo(event) {
-            event.preventDefault();
+        // Hasta bilgi arama
+        function searchPatientInfo() {
+            const tcNo = document.getElementById('tcNo').value;
+            const birthDate = document.getElementById('birthDate').value;
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
             
-            const tc = document.getElementById('tc-input').value;
-            const name = document.getElementById('name-input').value;
-            const birth = document.getElementById('birth-input').value;
+            if (!tcNo || !birthDate || !firstName || !lastName) {
+                alert('Lütfen tüm alanları doldurun.');
+                return;
+            }
             
-            // Simulate patient data search
-            setTimeout(() => {
-                displayPatientResults(name);
-            }, 2000);
+            // Simülasyon verisi
+            const results = document.getElementById('resultsContent');
+            results.innerHTML = `
+                <div class="result-item">
+                    <h4>Yaklaşan Randevular</h4>
+                    <p><strong>30 Temmuz 2025, 14:00</strong> - Dr. Mehmet Yılmaz (Kardiyoloji)</p>
+                    <p><strong>5 Ağustos 2025, 10:30</strong> - Dr. Ayşe Demir (Göz Hastalıkları)</p>
+                </div>
+                <div class="result-item">
+                    <h4>Test Sonuçları</h4>
+                    <p><strong>25 Temmuz 2025</strong> - Kan Tahlili: Normal değerler</p>
+                    <p><strong>20 Temmuz 2025</strong> - EKG: Normal</p>
+                </div>
+                <div class="result-item">
+                    <h4>Geçmiş Muayeneler</h4>
+                    <p><strong>15 Temmuz 2025</strong> - Genel Muayene (Dr. Ali Kaya)</p>
+                    <p><strong>10 Temmuz 2025</strong> - Kontrol Muayenesi</p>
+                </div>
+            `;
+            
+            document.getElementById('patientResults').style.display = 'block';
         }
 
-        function displayPatientResults(patientName) {
-            const resultsContainer = document.getElementById('patient-results-content');
-            
-            // Mock patient data
-            const mockResults = [
-                {
-                    title: currentLanguage === 'tr' ? 'Kardiyoloji Randevusu' : 
-                           currentLanguage === 'en' ? 'Cardiology Appointment' : 
-                           'Кардиологичен преглед',
-                    date: '15.02.2025 - 14:30'
-                },
-                {
-                    title: currentLanguage === 'tr' ? 'Kan Tahlili Sonucu' : 
-                           currentLanguage === 'en' ? 'Blood Test Result' : 
-                           'Резултат от кръвен тест',
-                    date: '10.02.2025'
-                },
-                {
-                    title: currentLanguage === 'tr' ? 'Göğüs Röntgeni' : 
-                           currentLanguage === 'en' ? 'Chest X-Ray' : 
-                           'Рентген на гърдите',
-                    date: '05.02.2025'
-                }
-            ];
-            
-            resultsContainer.innerHTML = mockResults.map(function(result) {
-                return '<div class="result-item">' +
-                       '<div class="result-title">' + result.title + '</div>' +
-                       '<div class="result-date">' + result.date + '</div>' +
-                       '</div>';
-            }).join('');
-        }
-
-        // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', init);
+        // Sayfa yüklendiğinde başlat
+        window.onload = function() {
+            startWelcomeRotation();
+        };
     </script>
 </body>
 </html>
