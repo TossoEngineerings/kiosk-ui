@@ -644,3 +644,73 @@
     </script>
 </body>
 </html>
+
+<script>
+    // Speech Recognition (sesli komut alma)
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = SpeechRecognition ? new SpeechRecognition() : null;
+    if (recognition) {
+        recognition.lang = 'tr-TR';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.onresult = function (event) {
+            const transcript = event.results[0][0].transcript;
+            addMessage(`(Sesli) ${transcript}`, 'user');
+            const response = generateAIResponse(transcript);
+            addMessage(response, 'assistant');
+            speakText(response); // sesli cevap
+        };
+
+        recognition.onerror = function (event) {
+            console.error('Speech recognition error:', event.error);
+            alert('Sesli algılama hatası: ' + event.error);
+        };
+
+        recognition.onend = () => {
+            isListening = false;
+            const button = document.getElementById('voiceButton');
+            button.style.background = '#667eea';
+            button.textContent = '🎤';
+        };
+    }
+
+    // Speech Synthesis (metni seslendirme)
+    function speakText(text) {
+        if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'tr-TR';
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+
+    // Voice tuşuna basınca kayıt başlasın
+    function toggleVoice() {
+        const button = document.getElementById('voiceButton');
+        if (!isListening && recognition) {
+            recognition.start();
+            isListening = true;
+            button.style.background = '#ff4444';
+            button.textContent = '🔴';
+        } else if (isListening) {
+            recognition.stop();
+        }
+    }
+
+    // Yazıyla gönderilen mesajlar da sesli okunabilir
+    function sendMessage() {
+        const input = document.getElementById('chatInput');
+        const message = input.value.trim();
+        if (message) {
+            addMessage(message, 'user');
+            input.value = '';
+
+            setTimeout(() => {
+                const response = generateAIResponse(message);
+                addMessage(response, 'assistant');
+                speakText(response); // Cevap sesli okunur
+            }, 1000);
+        }
+    }
+</script>
+
